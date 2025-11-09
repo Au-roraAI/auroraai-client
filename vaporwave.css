@@ -1,0 +1,216 @@
+/* AuroraAI Vaporwave Theme
+   Save as: vaporwave.css
+   Usage (in your HTML):
+     <link rel="stylesheet" href="vaporwave.css">
+   Optional fonts: include in <head> if you want pixel headers:
+     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+*/
+:root{
+  --vw-pink:#ff71ce;
+  --vw-purple:#b967ff;
+  --vw-cyan:#01cdfe;
+  --vw-yellow:#fffb96;
+  --vw-blue:#4b6bfb;
+  --vw-green:#25ff6a;
+  --bg-900:#08051b;
+  --bg-800:#0a0620;
+  --text-100:#f8f9ff;
+  --text-200:#e8e9ff;
+  --glass: rgba(255,255,255,0.08);
+  --glass-2: rgba(255,255,255,0.12);
+  --border: rgba(255,255,255,0.18);
+  --shadow: 0 15px 35px rgba(0,0,0,.45), 0 5px 15px rgba(0,0,0,.25);
+  --radius-xl: 20px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --ring: 0 0 0 3px rgba(255,113,206,.25), 0 0 0 6px rgba(1,205,254,.18);
+}
+
+html, body { height: 100%; }
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+  color: var(--text-100);
+  background: var(--bg-900);
+  overflow-x: hidden;
+}
+
+/* Vaporwave animated background */
+.vw-bg{
+  position: relative;
+  background:
+    radial-gradient(1200px 700px at 70% 20%, rgba(255,255,255,.07), transparent 60%),
+    radial-gradient(900px 600px at 10% 80%, rgba(255,255,255,.06), transparent 60%),
+    conic-gradient(from 180deg at 50% 50%,
+      var(--vw-purple), var(--vw-pink), var(--vw-cyan),
+      var(--vw-yellow), var(--vw-purple));
+  background-blend-mode: screen, screen, normal;
+  animation: vwHue 16s linear infinite;
+}
+
+/* Scanlines overlay (use with JS helper or attach manually) */
+.vw-scanlines::before{
+  content:""; position: fixed; inset:0; pointer-events:none; z-index: 5;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 2px, transparent 4px),
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.06), transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(255,255,255,.04), transparent 40%);
+  mix-blend-mode: overlay; opacity:.5;
+}
+
+/* Neon grid floor */
+.vw-grid{
+  position: fixed; left:0; right:0; bottom:-40vh; height: 80vh; z-index: 1;
+  background:
+    linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,.15) 30%, rgba(0,0,0,.4) 60%, rgba(0,0,0,.75) 100%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.15) 0 2px, transparent 2px 60px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.15) 0 2px, transparent 2px 60px);
+  transform: perspective(900px) rotateX(60deg) scale(1.4);
+  filter: drop-shadow(0 0 18px rgba(185,103,255,.55));
+  animation: vwGridGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes vwHue { to { filter: hue-rotate(360deg); } }
+@keyframes vwGridGlow { from { opacity:.35 } to { opacity:.7 } }
+@keyframes vwFloat { 0%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(0) } }
+@keyframes vwPulse { 0%,100%{ opacity:.9 } 50%{ opacity:1 } }
+
+/* Layout: preview left, sidebar right (approx 70/30) */
+.vw-layout{
+  position: relative; z-index:2;
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 30%);
+  grid-template-rows: 100vh;
+}
+
+.vw-preview{
+  position: relative; z-index:2;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  background: rgba(0,0,0,.25);
+}
+.vw-preview iframe{
+  width: 100%; height: 100%; border:0; background:#000;
+}
+
+/* Sidebar */
+.vw-sidebar{
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: rgba(10,6,32,0.65);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow);
+}
+
+/* Sections inside sidebar */
+.vw-section{
+  padding: 1rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.vw-section h3{
+  margin: 0 0 .5rem 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: 14px; letter-spacing:1px;
+  background-image: linear-gradient(90deg, var(--vw-pink), var(--vw-purple), var(--vw-cyan));
+  -webkit-background-clip: text; background-clip:text; color: transparent;
+}
+
+/* Cards / surfaces */
+.vw-card{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: .75rem;
+  box-shadow: var(--shadow);
+}
+
+/* Buttons */
+.vw-btn{
+  display:inline-flex; align-items:center; gap:.5rem;
+  border-radius: 999px;
+  border:1px solid rgba(255,255,255,.25);
+  background: linear-gradient(90deg, rgba(255,113,206,.25), rgba(1,205,254,.2));
+  color:#fff; padding:.55rem 1rem; cursor:pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  text-decoration:none; user-select:none;
+}
+.vw-btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 30px rgba(0,0,0,.35), inset 0 0 16px rgba(255,255,255,.15); }
+.vw-btn:active{ transform: translateY(0); }
+
+.vw-btn-outline{
+  border:1px solid var(--border);
+  background: transparent;
+}
+
+/* Inputs */
+.vw-input, .vw-select, .vw-textarea{
+  width: 100%;
+  background: rgba(255,255,255,.08);
+  color: var(--text-100);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: .6rem .75rem;
+  outline: none;
+}
+.vw-input:focus, .vw-select:focus, .vw-textarea:focus{
+  box-shadow: var(--ring);
+}
+
+/* Toolbar fixed to bottom of sidebar */
+.vw-toolbar{
+  position: sticky; bottom: 0;
+  padding: .75rem;
+  background: linear-gradient(180deg, rgba(10,6,32,.55), rgba(10,6,32,.85));
+  border-top: 1px solid var(--border);
+  display: grid; gap: .5rem;
+}
+.vw-toolbar .vw-row{ display:flex; gap:.5rem; align-items:center; }
+.vw-toolbar .vw-row > *{ flex:1 1 auto; }
+.vw-toolbar .vw-row .vw-btn{ flex:0 0 auto; }
+
+/* Lists (revisions) */
+.vw-list{ list-style:none; margin:0; padding:0; }
+.vw-list li{
+  display:flex; align-items:flex-start; gap:.6rem;
+  padding:.6rem .5rem; border-radius: var(--radius-md);
+  border:1px solid transparent;
+}
+.vw-list li:hover{ background: rgba(255,255,255,.06); border-color: var(--border); cursor:pointer; }
+.vw-list .vw-badge{ font-size:.75rem; padding:.2rem .5rem; border-radius:999px; border:1px solid var(--border); background: rgba(255,255,255,.08); }
+
+/* Chips / badges */
+.vw-chip{
+  display:inline-flex; align-items:center; gap:.25rem;
+  font-size:.8rem; padding:.25rem .5rem;
+  border-radius:999px; border:1px solid var(--border);
+  background: rgba(255,255,255,.08);
+}
+
+/* Toasts */
+.vw-toast-container{
+  position: fixed; right: 16px; top: 16px; z-index: 9999; display:grid; gap:.5rem;
+}
+.vw-toast{
+  background: rgba(0,0,0,.6);
+  border: 1px solid var(--border);
+  color: var(--text-100);
+  padding: .6rem .8rem; border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.vw-toast.success{ border-color: rgba(37,255,106,.5); }
+.vw-toast.error{ border-color: rgba(255,113,113,.6); }
+
+/* Utility */
+.vw-gradient-text{
+  background: linear-gradient(90deg, var(--vw-pink), var(--vw-purple), var(--vw-cyan));
+  -webkit-background-clip:text; background-clip:text; color: transparent;
+}
+.vw-muted{ color: var(--text-200); opacity:.8 }
+.vw-center{ display:grid; place-items:center; }
+
+/* Responsive */
+@media (max-width: 992px){
+  .vw-layout{ grid-template-columns: 1fr; grid-template-rows: auto auto; }
+  .vw-sidebar{ min-height: 60vh; }
+  .vw-preview{ height: 50vh; border-right: none; border-bottom: 1px solid var(--border); }
+}
