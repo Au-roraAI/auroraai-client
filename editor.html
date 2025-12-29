@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuroraAI // Workspace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/editor.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="preview-pane">
+            <div class="menubar" style="display: flex; flex-direction: row; align-items: center; gap: 16px; height: 48px; background: #121215; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 16px;">
+                <div class="menubar-title" style="display: flex; align-items: center; gap: 8px; margin-right: 16px; color: white; font-weight: 600;">
+                    <div class="status-dot" id="status-indicator" style="width: 8px; height: 8px; background-color: #333; border-radius: 50%;"></div>
+                    Preview
+                </div>
+
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer; padding: 6px 12px; color: #8a8a90;">File</div>
+                    <ul class="dropdown-menu dropdown-menu-dark-custom">
+                        <li><a class="dropdown-item" href="#" id="menu-export-html">Export HTML (.html)</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="menu-close-project">Close Project</a></li>
+                    </ul>
+                </div>
+
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer; padding: 6px 12px; color: #8a8a90;">View</div>
+                    <ul class="dropdown-menu dropdown-menu-dark-custom">
+                        <li><a class="dropdown-item" href="#" id="menu-view-code">View Source Code</a></li>
+                        <li><a class="dropdown-item" href="#" id="menu-new-tab">Open in New Tab</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="menu-refresh">Refresh Frame</a></li>
+                    </ul>
+                </div>
+
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer; padding: 6px 12px; color: #8a8a90;">Debug</div>
+                    <ul class="dropdown-menu dropdown-menu-dark-custom">
+                        <li><a class="dropdown-item" href="#" id="menu-debug-info">Show API Response</a></li>
+                    </ul>
+                </div>
+
+                <div class="dropdown">
+                    <div class="menu-item dropdown-toggle" data-bs-toggle="dropdown" style="cursor: pointer; padding: 6px 12px; color: #8a8a90;">Help</div>
+                    <ul class="dropdown-menu dropdown-menu-dark-custom" style="min-width: 250px;">
+                        <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size:0.7rem; letter-spacing:1px;">Credits</h6></li>
+                        <li><a class="dropdown-item disabled" href="#" style="opacity:0.6; cursor:default;">Theme inspired by @loriwastolen</a></li>
+                        <li><a class="dropdown-item disabled" href="#" style="opacity:0.6; cursor:default;">Idea Bubbles inspired by [Unknown App]</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin" srcdoc=""></iframe>
+            <div class="loader-overlay" id="loading-overlay">
+                <div class="spinner mb-3"></div>
+                <div class="text-muted small fw-bold">GENERATING...</div>
+            </div>
+        </div>
+
+        <div class="sidebar position-relative">
+            
+            <div id="view-dashboard" class="d-flex flex-column h-100 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold text-white">Your Projects</h5>
+                    <button id="btn-new-project" class="btn btn-sm btn-primary-clean" style="width:auto; padding: 6px 16px;">+ New</button>
+                </div>
+                
+                <div id="projects-list" class="flex-grow-1 overflow-auto">
+                    </div>
+                
+                <div class="mt-3 text-center text-muted small">
+                    <button id="btn-global-settings" class="btn btn-link text-muted p-0 text-decoration-none" style="font-size:0.8rem">Global API Settings</button>
+                </div>
+            </div>
+
+            <div id="view-editor" class="d-none flex-column h-100">
+                
+                <div class="sidebar-header border-bottom border-dark pb-3">
+                    <button id="btn-back-dashboard" class="btn btn-link text-muted p-0 mb-3 text-decoration-none" style="font-size:0.8rem">← Back to Projects</button>
+                    
+                    <div class="mb-2">
+                        <label>Project Name</label>
+                        <input type="text" id="project-title" class="clean-input w-100" placeholder="Untitled Project">
+                    </div>
+                    <div>
+                        <input type="text" id="project-desc" class="clean-input w-100 text-muted" style="font-size: 0.8rem;" placeholder="Project description...">
+                    </div>
+                </div>
+
+                <div class="d-flex px-4 mt-2 justify-content-between align-items-center">
+                    <label class="mb-0">History</label>
+                    <span class="badge bg-dark text-muted border border-secondary" style="font-weight:400" id="rev-count">0</span>
+                </div>
+                <div class="revisions-list" id="revisions-container"></div>
+
+                <div class="composer mt-auto">
+                    <div id="idea-bubbles-container" class="d-flex gap-2 mb-2 flex-wrap" style="display:none;">
+                    </div>
+                    <div class="d-flex justify-content-between align-items-end mb-1">
+                        <label>Prompt</label>
+                        
+                        <div class="d-flex gap-2">
+                            <button id="btn-enhance-prompt" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.75rem; color: var(--accent-color);" title="Rewrite using AI">
+                                ✨ Enhance
+                            </button>
+                            <button id="btn-idea-generator" class="btn btn-link p-0 text-decoration-none" style="font-size: 0.75rem; color: #f59e0b;" title="Generate features">
+                                💡 Get Ideas
+                            </button>
+                        </div>
+                    </div>
+
+                    <textarea id="prompt-input" class="clean-input w-100 mb-3" rows="3" placeholder="Describe the UI..."></textarea>
+                    
+                    
+                    <div class="w-100">
+                        <input type="hidden" id="model-select-value" value="xiaomi/mimo-v2-flash:free">
+
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select" id="custom-model-selector">
+                                
+                                <div class="custom-select__trigger">
+                                    <span id="current-model-label">Xiaomi Mimo V2 Flash</span>
+                                    <div class="arrow"></div>
+                                </div>
+                                
+                                <div class="custom-options">
+                                    
+                                    <div class="custom-option-header">FREE - General</div>
+                                    
+                                    <div class="custom-option selected" data-value="xiaomi/mimo-v2-flash:free">
+                                        <span class="model-name">Xiaomi Mimo V2 Flash</span>
+                                        <div class="info-icon" data-tooltip="The open-weight GOAT. Honestly better than the paid stuff sometimes.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option" data-value="allenai/olmo-3.1-32b-think:free">
+                                        <span class="model-name">AllenAI Olmo 3.1 Think</span>
+                                        <div class="info-icon" data-tooltip="Big brain energy. 50/50 chance it's genius or totally hallucinating.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option" data-value="z-ai/glm-4.5-air:free">
+                                        <span class="model-name">GLM 4.5 Air</span>
+                                        <div class="info-icon" data-tooltip="Fast, free, and 'good enough' for government work.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option-header">FREE - Coding</div>
+                                    
+                                    <div class="custom-option" data-value="qwen/qwen3-coder:free">
+                                        <span class="model-name">Qwen3 Coder</span>
+                                        <div class="info-icon" data-tooltip="Will literally write your entire app while you sleep. No offense.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option-header">PAID - General</div>
+                                    
+                                    <div class="custom-option" data-value="z-ai/glm-4.7">
+                                        <span class="model-name">GLM 4.7 ($1.5/M)</span>
+                                        <div class="info-icon" data-tooltip="Smart but won't break the bank. The sensible choice.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option" data-value="google/gemini-3-flash-preview">
+                                        <span class="model-name">Gemini 3 Flash ($3/M)</span>
+                                        <div class="info-icon" data-tooltip="Speedrunner's choice. Zoom zoom.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option" data-value="google/gemini-3-pro-preview">
+                                        <span class="model-name">Gemini 3 Pro ($12/M)</span>
+                                        <div class="info-icon" data-tooltip="The big guns. RIP your wallet if you put this in a loop.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option-header">PAID - Coding</div>
+                                    
+                                    <div class="custom-option" data-value="anthropic/claude-opus-4.5">
+                                        <span class="model-name">Claude Opus 4.5 ($25/M)</span>
+                                        <div class="info-icon" data-tooltip="Coding wizardry. Costs a literal kidney per 100 lines.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-option-header">Advanced</div>
+                                    
+                                    <div class="custom-option" data-value="custom_mode">
+                                        <span class="model-name">Custom Model ID...</span>
+                                        <div class="info-icon" data-tooltip="For when you're too cool for the presets.">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <input type="text" id="model-custom-input" class="clean-input w-100 d-none" placeholder="e.g. openai/gpt-4o">
+                    </div>
+
+                    <button id="btn-generate" type="button" class="btn-primary-clean">Generate</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content clean-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white fs-6">Configuration</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Enter your OpenRouter API key.</p>
+                    <div class="mb-3">
+                        <label>OpenRouter Key</label>
+                        <input type="password" id="user-api-key" class="clean-input w-100 font-mono" placeholder="sk-or-...">
+                    </div>
+                    <div id="key-status" class="small mb-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-clear-key">Clear</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-save-key">Save Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="codeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content clean-modal">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex gap-3" id="inspection-tabs">
+                        <button class="tab-btn active" data-target="view-code">Source Code</button>
+                        <button class="tab-btn" data-target="view-reasoning" id="tab-btn-reasoning">Reasoning</button>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    
+                    <div id="view-code" class="inspection-view active">
+                        <div id="code-content" class="code-preview"></div>
+                    </div>
+
+                    <div id="view-reasoning" class="inspection-view">
+                        <div id="reasoning-content" class="code-preview text-warning" style="white-space: pre-wrap; font-family: sans-serif; line-height: 1.6;"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                     <button type="button" class="btn btn-primary-clean btn-sm" style="width:auto" id="btn-copy-content">Copy Content</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="debugModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content clean-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white fs-6 font-mono">Debug: Last API Response</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="debug-content" class="code-preview debug-json"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="aurora-tooltip" class="aurora-tooltip"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/editor.js"></script>
+</body>
+</html>

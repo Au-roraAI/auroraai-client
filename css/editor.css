@@ -1,0 +1,693 @@
+/* =========================================
+   VARIABLES & THEME
+   ========================================= */
+:root {
+    /* Base Colors */
+    --bg-app: #0e0e12;
+    --bg-panel: #121215;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-card-hover: rgba(255, 255, 255, 0.06);
+    
+    /* Borders */
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-accent: rgba(0, 194, 255, 0.3);
+
+    /* Typography */
+    --text-main: #f4f4f6;
+    --text-muted: #8a8a90;
+    --text-accent: #00c2ff;
+
+    /* Accent */
+    --accent-color: #00c2ff;
+    --accent-glow: rgba(0, 194, 255, 0.15);
+
+    /* Spacing */
+    --radius-md: 12px;
+    --radius-sm: 8px;
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================
+   UTILITIES
+   ========================================= */
+.text-accent { color: var(--accent-color) !important; }
+.text-muted { color: var(--text-muted) !important; }
+.font-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+/* =========================================
+   LAYOUT STRUCTURE
+   ========================================= */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- LEFT PANEL: PREVIEW --- */
+.preview-pane {
+    flex: 1;
+    background: #000;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-subtle);
+}
+
+/* MENUBAR (The fix for your issue) */
+.menubar {
+    height: 48px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex !important; /* Force flex layout */
+    flex-direction: row;      /* Force horizontal alignment */
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;                 /* Spacing between items */
+    font-size: 0.85rem;
+    user-select: none;
+}
+
+.menubar-title {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #333;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+.status-dot.active {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-color);
+}
+
+/* Menu Items & Dropdowns */
+.menu-item {
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    text-decoration: none; /* Remove underline */
+}
+.menu-item:hover, .menu-item.active, .show > .menu-item {
+    color: var(--text-main);
+    background: var(--bg-card-hover);
+}
+
+/* Hide the default Bootstrap caret arrow for a cleaner look */
+.menubar .dropdown-toggle::after {
+    display: none;
+}
+
+/* Custom Dropdown Styling */
+.dropdown-menu-dark-custom {
+    background-color: #18181b;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    padding: 6px;
+    margin-top: 8px; /* Slight offset */
+}
+.dropdown-item {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+.dropdown-item:hover {
+    background-color: var(--accent-color);
+    color: #000;
+}
+.dropdown-divider {
+    border-top-color: var(--border-subtle);
+}
+
+/* IFRAME */
+#preview-frame {
+    flex: 1;
+    border: none;
+    background: white;
+    width: 100%;
+}
+
+/* =========================================
+   RIGHT PANEL: SIDEBAR
+   ========================================= */
+.sidebar {
+    width: 400px;
+    background: var(--bg-panel);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border-subtle);
+    box-shadow: -10px 0 40px rgba(0,0,0,0.3);
+}
+
+.sidebar-header {
+    padding: 24px 24px 10px 24px;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* FORMS & INPUTS */
+.clean-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+.clean-input:focus {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.clean-input::placeholder {
+    color: rgba(255,255,255,0.2);
+}
+
+textarea.clean-input {
+    resize: none;
+    line-height: 1.5;
+}
+
+label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* REVISIONS LIST */
+.revisions-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 24px;
+}
+
+.revision-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+.revision-card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.15);
+}
+.revision-card.active {
+    border-color: var(--accent-color);
+    background: rgba(0, 194, 255, 0.05);
+}
+
+.rev-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+}
+.rev-prompt {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--text-main);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* COMPOSER AREA */
+.composer {
+    padding: 24px;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid var(--border-subtle);
+    backdrop-filter: blur(10px);
+}
+
+/* SELECT WRAPPER */
+.select-wrapper {
+    position: relative;
+    margin-bottom: 12px;
+}
+.clean-select {
+    appearance: none;
+    width: 100%;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+/* BUTTONS */
+.btn-primary-clean {
+    width: 100%;
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-primary-clean:hover {
+    opacity: 0.9;
+    transform: scale(1.01);
+}
+.btn-primary-clean:disabled {
+    background: #333;
+    color: #555;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-icon {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-icon:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+    background: var(--bg-card-hover);
+}
+
+/* =========================================
+   OVERLAYS & MODALS
+   ========================================= */
+
+/* LOADING OVERLAY */
+.loader-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 14, 18, 0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.loader-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent-color);
+    animation: spin 0.8s ease-in-out infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* CODE & DEBUG PREVIEWS */
+.code-preview {
+    background: #0d0d10;
+    color: #a9b7c6;
+    padding: 16px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--border-subtle);
+}
+.debug-json {
+    color: #a5d6ff;
+}
+
+/* BOOTSTRAP MODAL OVERRIDES */
+.modal-content.clean-modal {
+    background: #18181b;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.modal-header, .modal-footer {
+    border-color: var(--border-subtle);
+}
+.btn-close-white { filter: invert(1); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* --- PROJECTS DASHBOARD --- */
+.project-card {
+    transition: all 0.2s ease;
+    background: var(--bg-card) !important;
+}
+.project-card:hover {
+    background: var(--bg-card-hover) !important;
+    transform: translateY(-2px);
+    border-color: var(--accent-color) !important;
+}
+.btn-delete-project {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.project-card:hover .btn-delete-project {
+    opacity: 1;
+}
+
+/* --- CUSTOM MODEL SELECTOR (WebSim Style) --- */
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.custom-select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-select__trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-main);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.custom-select__trigger:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: var(--bg-card-hover);
+}
+
+/* UPDATED: Square off the TOP corners when open (since menu is above) */
+.custom-select.open .custom-select__trigger {
+    border-color: var(--accent-color);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.arrow {
+    position: relative;
+    height: 10px;
+    width: 10px;
+}
+.arrow::after {
+    content: ''; 
+    position: absolute; 
+    top: 3px; right: 0;
+    border: 5px solid transparent;
+    border-top-color: var(--text-muted);
+    transition: 0.2s;
+}
+.custom-select.open .arrow::after {
+    top: -2px;
+    transform: rotate(180deg);
+    border-top-color: var(--accent-color);
+}
+
+/* UPDATED: Position menu ABOVE the trigger */
+.custom-options {
+    position: absolute;
+    display: block;
+    bottom: 100%; /* Anchors to the top of the trigger */
+    top: auto;    /* Ignore top property */
+    left: 0; right: 0;
+    
+    background: #18181b;
+    border: 1px solid var(--border-subtle);
+    border-bottom: 0; /* Remove border where it touches trigger */
+    
+    /* Round top corners, square bottom corners */
+    border-top-left-radius: var(--radius-sm);
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    
+    box-shadow: 0 -10px 20px rgba(0,0,0,0.5); /* Shadow goes UP */
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    
+    /* Animation: slide slightly from bottom to top */
+    transform: translateY(10px); 
+    transition: all 0.2s ease;
+    
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.custom-select.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transform: translateY(0);
+}
+
+/* OPTION STYLING (Unchanged) */
+.custom-option {
+    position: relative;
+    display: block;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.1s;
+}
+.custom-option:hover {
+    color: #fff;
+    background-color: var(--accent-color);
+    color: #000;
+}
+.custom-option.selected {
+    color: var(--accent-color);
+    background: rgba(0, 194, 255, 0.05);
+    font-weight: 600;
+}
+.custom-option-header {
+    padding: 8px 12px 4px 12px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #555;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    margin-top: 4px;
+}
+
+/* --- INFO ICONS & TOOLTIPS --- */
+
+/* The row layout */
+.custom-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* The Icon Container */
+.info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: var(--text-muted);
+    opacity: 0.5;
+    transition: all 0.2s;
+    cursor: help;
+}
+
+.custom-option:hover .info-icon {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+/* --- NEW: GLOBAL JS TOOLTIP --- */
+.aurora-tooltip {
+    position: fixed; /* Fixed to viewport so nothing clips it */
+    z-index: 99999;  /* Higher than everything */
+    background: #09090b;
+    border: 1px solid var(--border-accent);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.4;
+    max-width: 220px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    pointer-events: none; /* Let clicks pass through */
+    
+    /* Animation state */
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.aurora-tooltip.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* --- INSPECTION MODAL TABS --- */
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding-bottom: 8px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+}
+
+.tab-btn.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+.inspection-view {
+    display: none;
+    height: 100%;
+}
+
+.inspection-view.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* --- IDEA BUBBLES --- */
+.idea-bubble {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    user-select: none;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 2px solid var(--accent-color);
+    animation: popIn 0.3s forwards;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.idea-bubble:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-color);
+    transform: translateY(-2px) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 194, 255, 0.15);
+}
+
+@keyframes popIn {
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Stagger animation delay for 3 bubbles */
+.idea-bubble:nth-child(1) { animation-delay: 0ms; }
+.idea-bubble:nth-child(2) { animation-delay: 100ms; }
+.idea-bubble:nth-child(3) { animation-delay: 200ms; }
+
+/* --- REVISION DELETE BUTTON --- */
+.revision-card {
+    position: relative; /* Ensure button anchors to card */
+    padding-right: 30px; /* Make space for the button so text doesn't overlap */
+}
+
+.btn-delete-rev {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.2s ease;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    z-index: 10;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    border-radius: 4px;
+}
+
+.btn-delete-rev:hover {
+    background: #ff4444;
+    color: white;
+}
+
+.revision-card:hover .btn-delete-rev {
+    opacity: 1;
+}
